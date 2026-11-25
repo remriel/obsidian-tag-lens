@@ -1,0 +1,63 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check TypeScript types
+        run: npm run typecheck
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Check release versions
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node -e "
+            const tag = process.env.RELEASE_TAG;
+            const manifest = require('./manifest.json');
+            const packageJson = require('./package.json');
+            const versions = require('./versions.json');
+            if (manifest.version !== tag || packageJson.version !== tag ||
+                versions[tag] !== manifest.minAppVersion) {
+              throw new Error('Release tag, package version, manifest version, and versions.json must match.');
+            }
+          "
+
+      - name: Attest release assets
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: |
+            main.js
+            styles.css
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" main.js manifest.json styles.css --verify-tag --generate-notes --title "$RELEASE_TAG"

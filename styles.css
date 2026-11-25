@@ -1,0 +1,49 @@
+.tag-lens-reader {
+  --tag-lens-border: var(--background-modifier-border);
+  --tag-lens-accent: var(--interactive-accent);
+}
+
+.tag-lens-chip {
+  display: inline-block;
+  padding: 0.08em 0.45em;
+  border: 2px solid var(--tag-lens-accent);
+  background: var(--tag-background);
+  color: var(--tag-color);
+  overflow-wrap: anywhere;
+}
+
+.tag-lens-results {
+  max-height: 52vh;
+  overflow: auto;
+  padding: 0 0.35em 0.35em 0;
+}
+
+.tag-lens-group h3 {
+  margin: 0.75em 0 0.3em;
+  overflow-wrap: anywhere;
+}
+
+.tag-lens-result {
+  padding: 0.65em 0.85em;
+  border: 1px solid var(--tag-lens-border);
+  border-inline-start: 4px solid var(--tag-lens-accent);
+  background: var(--background-secondary);
+  margin-bottom: 0.6em;
+  overflow-wrap: anywhere;
+}
+
+.tag-lens-paragraph {
+  margin: 0 0 0.5em;
+  white-space: pre-wrap;
+}
+
+.tag-lens-footer {
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.tag-lens-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
